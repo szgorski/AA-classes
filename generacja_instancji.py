@@ -41,22 +41,28 @@ def write_to_file(filename, sets, number_of_vertices):
         f.close()
     except:
         print('Nie można utworzyć pliku wyjściowgo')
+        input('\nNaciśnij Enter, aby zakończyć program...')
         exit(1)
 
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print('Błędna liczba argumentów! Wymagane 2 argumenty:')
+        print('Błędna liczba argumentów! Wymagane 2 argumenty uruchamiania:')
         print('    count       <int>: liczba wierzchołków w drzewie')
         print('    path_out <string>: ścieżka pliku wyjściowego')
+        input('\nNaciśnij Enter, aby zakończyć program...')
         exit(1)
 
     random.seed(SEED)
     n = int(sys.argv[1])
     if n < 1:
-        print("Błędna liczba wierzchołków")
+        print('Błędna liczba wierzchołków')
+        input('\nNaciśnij Enter, aby zakończyć program...')
         exit(1)
 
     children = add_children(n)
-    path_out = sys.argv[2]
+    path_out = str(sys.argv[2])
     write_to_file(path_out, children, n)
+
+    print('Wygenerowane drzewo znajduje się pliku ' + path_out)
+    input('\nNaciśnij Enter, aby zakończyć program...')
