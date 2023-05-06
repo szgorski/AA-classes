@@ -7,6 +7,7 @@ def read_file(filename):
         file = open(filename, "r")
     except:
         print('Nie można otworzyć pliku wejściowgo')
+        input('\nNaciśnij Enter, aby zakończyć program...')
         exit(1)
 
     try:
@@ -24,10 +25,12 @@ def read_file(filename):
         file.close()
     except:
         print('Nie można odczytać pliku wejściowgo')
+        input('\nNaciśnij Enter, aby zakończyć program...')
         exit(1)
 
     if len(tree) != first_line[0]:
         print('Nieprawidłowa liczba linii w pliku wejściowym')
+        input('\nNaciśnij Enter, aby zakończyć program...')
         exit(1)
 
     return tree, first_line[1]
@@ -40,6 +43,7 @@ def save_file(filename, output):
         file.close()
     except:
         print('Nie można utworzyć pliku wyjściowgo')
+        input('\nNaciśnij Enter, aby zakończyć program...')
         exit(1)
 
 
@@ -56,12 +60,16 @@ def count(tree, index):
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
-        print('Błędna liczba argumentów! Wymagane 2 argumenty:')
+        print('Błędna liczba argumentów! Wymagane 2 argumenty uruchamiania:')
         print('    path_in  <string>: ścieżka pliku wejściowego')
         print('    path_out <string>: ścieżka pliku wyjściowego')
+        input('\nNaciśnij Enter, aby zakończyć program...')
         exit(1)
 
     sys.set_int_max_str_digits(0)
-    graph, root = read_file(sys.argv[1])
+    graph, root = read_file(str(sys.argv[1]))
     a, b = count(graph, root)
-    save_file(sys.argv[2], str(a + b))
+    save_file(str(sys.argv[2]), str(a + b))
+
+    print('Odpowiedź znajduje się pliku ' + str(sys.argv[2]))
+    input('\nNaciśnij Enter, aby zakończyć program...')
