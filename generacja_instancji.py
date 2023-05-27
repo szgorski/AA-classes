@@ -1,31 +1,28 @@
 import sys
+import numpy as np
 import random
-
 # random seed
 SEED = None
 
 
-def add_children(n, mean, std_dev):
-    children_sets = list()
+def add_children(n, MEAN, STD_DEV):
+    children_sets = [None] * n
     for i in range(n):
-        children_sets.append(list())
-
-    parent = 1
-    last_child = 1
-    while last_child < n:
-        parent += 1
-        if parent > last_child:
-            parent = parent % last_child + 1
-
-        number_of_children = round(random.normalvariate(mu=mean, sigma=std_dev))
-        number_of_children = min(n - last_child, max(number_of_children, 0))
-
+        children_sets[i] = []
+    parent_vertex = 1
+    current_vertex = 1
+    while current_vertex <= n:
+        parent_vertex = parent_vertex % current_vertex + 1
+        number_of_children = int(random.normalvariate(
+            mu=MEAN, sigma=STD_DEV))
+        if (number_of_children == 0 and n != current_vertex):
+            number_of_children = 1
         for i in range(number_of_children):
-            last_child += 1
-            children_sets[parent - 1].append(last_child)
-
-        if last_child == n:
-            break
+            current_vertex += 1
+            # jeśli zostały użyte wszystkie wierzchołki, zakończ generacje
+            if (current_vertex > n):
+                break
+            children_sets[parent_vertex-1].append(current_vertex)
 
     return children_sets
 
@@ -35,7 +32,7 @@ def write_to_file(filename, children_sets, n):
     f.write(str(n) + " 1\n")
 
     for i in range(len(children_sets)):
-        f.write(str(i + 1) + " ")
+        f.write(str(i+1) + " ")
         for j in range(len(children_sets[i])):
             f.write(str(children_sets[i][j]) + " ")
 
@@ -44,28 +41,28 @@ def write_to_file(filename, children_sets, n):
 
 
 def main():
-    if len(sys.argv) < 2:
+    if (len(sys.argv) < 2):
         print("Enter number of vertices.")
         return -1
     random.seed(SEED)
     n = int(sys.argv[1])
-    if n < 1:
+    if (n < 1):
         print("Invalid number")
         return -1
 
-    if len(sys.argv) > 2:
+    if (len(sys.argv) > 2):
         filename = sys.argv[2]
     else:
         filename = "sample_tree.txt"
 
-    if len(sys.argv) == 5:
-        mean = int(sys.argv[3])
-        std_dev = int(sys.argv[4])
+    if (len(sys.argv) == 5):
+        MEAN = int(sys.argv[3])
+        STD_DEV = int(sys.argv[4])
     else:
-        mean = 4
-        std_dev = 2
+        MEAN = 4
+        STD_DEV = 2
 
-    children_sets = add_children(n, mean, std_dev)
+    children_sets = add_children(n, MEAN, STD_DEV)
     write_to_file(filename, children_sets, n)
 
 
