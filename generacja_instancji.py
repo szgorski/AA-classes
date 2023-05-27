@@ -42,12 +42,12 @@ def write_to_file(filename, children_sets, n):
 
 def main():
     if (len(sys.argv) < 2):
-        print("Enter number of vertices.")
+        print("Wprowadź liczbę wierzchołków.")
         return -1
     random.seed(SEED)
     n = int(sys.argv[1])
     if (n < 1):
-        print("Invalid number")
+        print("Nieprawidłowa liczba wierzchołków.")
         return -1
 
     if (len(sys.argv) > 2):
