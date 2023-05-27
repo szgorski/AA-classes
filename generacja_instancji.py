@@ -9,20 +9,15 @@ def add_children(number_of_vertices):
     for i in range(number_of_vertices):
         children_sets.append(list())
 
-    bfs_queue = [1]
-    current_vertex = 1
-    while len(bfs_queue) > 0:
-        parent_vertex = bfs_queue[0]
-        number_of_children = random.randint(0, number_of_vertices - current_vertex)
-
-        if number_of_children == 0 and current_vertex != number_of_vertices and len(bfs_queue) == 1:
-            number_of_children = 1
-
+    parent = 1
+    last_child = 1
+    while last_child < number_of_vertices:
+        parent = parent % last_child + 1
+        pow_base = 2 - 2 * parent / number_of_vertices
+        number_of_children = round(2 * pow_base * pow_base * random.random())
         for i in range(number_of_children):
-            current_vertex += 1
-            children_sets[parent_vertex - 1].append(current_vertex)
-            bfs_queue.append(current_vertex)
-        bfs_queue.pop(0)
+            last_child += 1
+            children_sets[parent - 1].append(last_child)
 
     return children_sets
 
