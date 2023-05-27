@@ -1,63 +1,70 @@
 import sys
+import numpy as np
 import random
-
+# random seed
 SEED = None
 
 
-def add_children(number_of_vertices):
-    children_sets = list()
-    for i in range(number_of_vertices):
-        children_sets.append(list())
-
-    parent = 1
-    last_child = 1
-    while last_child < number_of_vertices:
-        parent = parent % last_child + 1
-        pow_base = 2 - 2 * parent / number_of_vertices
-        number_of_children = round(2 * pow_base * pow_base * random.random())
+def add_children(n, MEAN, STD_DEV):
+    children_sets = [None] * n
+    for i in range(n):
+        children_sets[i] = []
+    parent_vertex = 1
+    current_vertex = 1
+    while current_vertex <= n:
+        parent_vertex = parent_vertex % current_vertex + 1
+        number_of_children = int(random.normalvariate(
+            mu=MEAN, sigma=STD_DEV))
+        if (number_of_children == 0 and n != current_vertex):
+            number_of_children = 1
         for i in range(number_of_children):
-            last_child += 1
-            children_sets[parent - 1].append(last_child)
+            current_vertex += 1
+            # jeśli zostały użyte wszystkie wierzchołki, zakończ generacje
+            if (current_vertex > n):
+                break
+            children_sets[parent_vertex-1].append(current_vertex)
 
     return children_sets
 
 
-def write_to_file(filename, sets, number_of_vertices):
-    try:
-        f = open(filename, "w")
-        f.write(str(number_of_vertices) + " 1\n")
+def write_to_file(filename, children_sets, n):
+    f = open(filename, "w")
+    f.write(str(n) + " 1\n")
 
-        for i in range(len(sets)):
-            f.write(str(i + 1) + " ")
-            for j in range(len(sets[i])):
-                f.write(str(sets[i][j]) + " ")
-            f.write("\n")
+    for i in range(len(children_sets)):
+        f.write(str(i+1) + " ")
+        for j in range(len(children_sets[i])):
+            f.write(str(children_sets[i][j]) + " ")
 
-        f.close()
-    except:
-        print('Nie można utworzyć pliku wyjściowgo')
-        input('\nNaciśnij Enter, aby zakończyć program...')
-        exit(1)
+        f.write("\n")
+    f.close()
+
+
+def main():
+    if (len(sys.argv) < 2):
+        print("Wprowadź liczbę wierzchołków.")
+        return -1
+    random.seed(SEED)
+    n = int(sys.argv[1])
+    if (n < 1):
+        print("Nieprawidłowa liczba wierzchołków.")
+        return -1
+
+    if (len(sys.argv) > 2):
+        filename = sys.argv[2]
+    else:
+        filename = "sample_tree.txt"
+
+    if (len(sys.argv) == 5):
+        MEAN = int(sys.argv[3])
+        STD_DEV = int(sys.argv[4])
+    else:
+        MEAN = 4
+        STD_DEV = 2
+
+    children_sets = add_children(n, MEAN, STD_DEV)
+    write_to_file(filename, children_sets, n)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print('Błędna liczba argumentów! Wymagane 2 argumenty uruchamiania:')
-        print('    count       <int>: liczba wierzchołków w drzewie')
-        print('    path_out <string>: ścieżka pliku wyjściowego')
-        input('\nNaciśnij Enter, aby zakończyć program...')
-        exit(1)
-
-    random.seed(SEED)
-    n = int(sys.argv[1])
-    if n < 1:
-        print('Błędna liczba wierzchołków')
-        input('\nNaciśnij Enter, aby zakończyć program...')
-        exit(1)
-
-    children = add_children(n)
-    path_out = str(sys.argv[2])
-    write_to_file(path_out, children, n)
-
-    print('Wygenerowane drzewo znajduje się pliku ' + path_out)
-    input('\nNaciśnij Enter, aby zakończyć program...')
+    main()
